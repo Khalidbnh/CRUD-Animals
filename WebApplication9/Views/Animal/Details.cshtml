@@ -1,0 +1,18 @@
+﻿@model WebApplication9.Models.ViewModel.DetailAnimalViewModel
+@{
+    ViewData["Title"] = "Details del " +Model.AnimalDetail.NombreAnimal;
+}
+
+
+
+<h1>Dettales del Animal @Model.AnimalDetail.NombreAnimal</h1>
+<p>ID: @Model.AnimalDetail.IdAnimal</p>
+<p>Nombre: @Model.AnimalDetail.NombreAnimal</p>
+<p>Raza: @Model.AnimalDetail.Raza</p>
+<p>Tipo de Animal: @Model.AnimalDetail.TipoAnimal.TipoDescripcion</p>
+<p>Fecha de nacimiento: @Model.AnimalDetail.FechaNacimiento?.ToString("d")</p>
+
+<a href="@Url.Action("Index", "Home")"> Volver a la lista </a>
+
+
+

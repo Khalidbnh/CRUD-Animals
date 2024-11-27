@@ -1,0 +1,81 @@
+﻿@using WebApplication9.Models.ViewModel
+@model AnimalViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+
+
+    <h1>Animal Management</h1>
+
+    <p>
+        <a asp-action="Add" asp-controller="Animal" class="btn btn-primary">Add New Animal</a>
+    </p>
+
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Breed</th>
+                <th>Type</th>
+                <th>Birth Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var animal in Model.Animales)
+            {
+                <tr>
+                    <td>@animal.NombreAnimal</td>
+                    <td>@animal.Raza</td>
+                    <td>@animal.TipoAnimal?.TipoDescripcion</td>
+                    <td>@animal.FechaNacimiento?.ToShortDateString()</td>
+                    <td>
+                        <form asp-action="AnimalDetails" asp-controller="Home" method="post" style="display:inline;"> 
+                             <input type="hidden" name="id" value="@animal.IdAnimal" />
+                             <button type="submit">Ver Detalles</button>
+                        </form>
+                        <a asp-action="Edit" asp-controller="Animal" asp-route-id="@animal.IdAnimal" class="btn btn-sm btn-warning">Edit</a>
+                        <form asp-action="Delete" asp-controller="Animal" asp-route-id="@animal.IdAnimal" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this animal?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+
+    <!--
+        <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1>Lista de Animales</h1>
+    <ul> foreach (var animal in Model.Animales)
+        {
+            <li>
+                <span class="animal-id"> ID: (animal.IdAnimal) </span> animal.NombreAnimal
+                <form asp-action="AnimalDetails" asp-controller="Home" method="post" style="display:inline;"> 
+                    <input type="hidden" name="id" value="animal.IdAnimal" />
+                    <button type="submit">Ver Detalles</button>
+
+                </form>
+            </li>
+        }
+        
+    </ul>
+    <h1>Lista de Tipos de Animales</h1>
+    <ul>
+        foreach (var tipoAnimal in Model.TipoAnimals)
+        {
+            <li>
+                <span class="animal-id"> ID: (tipoAnimal.IdTipoAnimal) </span> tipoAnimal.TipoDescripcion
+            </li>
+        }
+    </ul>
+    -->
+</div>

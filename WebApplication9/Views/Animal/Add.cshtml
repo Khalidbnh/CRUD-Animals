@@ -1,0 +1,49 @@
+﻿@model WebApplication9.Models.AnimalModel
+
+@{
+    ViewData["Title"] = "Add Animal";
+}
+
+<div class="container mt-4">
+    <h1>Add Animal</h1>
+
+    <form asp-action="Insert" method="post" class="mt-4">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group mb-3">
+            <label asp-for="NombreAnimal" class="form-label"></label>
+            <input asp-for="NombreAnimal" class="form-control" />
+            <span asp-validation-for="NombreAnimal" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="Raza" class="form-label"></label>
+            <input asp-for="Raza" class="form-control" />
+            <span asp-validation-for="Raza" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="RIdTipoAnimal" class="form-label"></label>
+            <select asp-for="RIdTipoAnimal" class="form-select" asp-items="@(new SelectList(ViewBag.TipoAnimales, "IdTipoAnimal", "TipoDescripcion"))">
+                <option value="">-- Select Animal Type --</option>
+            </select>
+            <span asp-validation-for="RIdTipoAnimal" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="FechaNacimiento" class="form-label"></label>
+            <input asp-for="FechaNacimiento" class="form-control" type="date" />
+            <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <div>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
