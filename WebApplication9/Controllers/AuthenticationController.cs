@@ -32,5 +32,17 @@ namespace WebApplication9.Controllers
             return View(loginViewModel);
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            // Clear the session to log the user out
+            HttpContext.Session.Clear();
+
+            // Redirect to the login page after logout
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }
