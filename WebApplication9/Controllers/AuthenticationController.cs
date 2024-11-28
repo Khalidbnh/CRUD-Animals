@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication9.Models.ViewModel;
+using WebApplication9.Filters;
 
 namespace WebApplication9.Controllers
 {
@@ -17,16 +18,16 @@ namespace WebApplication9.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login(LoginViewModel loginViewModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                //Validar Usuario
-                if(loginViewModel.Username == "admin" && loginViewModel.Password == "admin")
-                {//authentificacion exitosa
-
+                if (loginViewModel.Username == "admin" && loginViewModel.Password == "admin")
+                {
+                    // Save user session
                     HttpContext.Session.SetString("Username", loginViewModel.Username);
                     return RedirectToAction("Index", "Home");
                 }
-                ModelState.AddModelError("", "Usuario o contraseña incorrectos");
+
+                ModelState.AddModelError("", "Invalid username or password.");
             }
             return View(loginViewModel);
         }

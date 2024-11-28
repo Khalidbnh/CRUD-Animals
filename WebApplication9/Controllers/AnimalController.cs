@@ -3,10 +3,12 @@ using System.Diagnostics;
 using WebApplication9.DAL;
 using WebApplication9.Models;
 using WebApplication9.Models.ViewModel;
+using WebApplication9.Filters;
 
 
 namespace WebApplication9.Controllers
 {
+    [SessionCheck]
     public class AnimalController : Controller
     {
         private readonly DAL_Animal _DAL_Animal = new DAL_Animal();

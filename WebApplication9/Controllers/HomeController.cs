@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication9.DAL;
 using WebApplication9.Models;
 using WebApplication9.Models.ViewModel;
+using WebApplication9.Filters;
 
 
 namespace WebApplication9.Controllers
 {
+    [SessionCheck]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -18,10 +20,10 @@ namespace WebApplication9.Controllers
 
         public IActionResult Index()
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+            /*if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
             {
                 return RedirectToAction("Login", "Authentication");
-            }
+            }*/
 
             DAL_Animal dal = new DAL_Animal();
             DAL_TipoAnimal dAL_TipoAnimal = new DAL_TipoAnimal();

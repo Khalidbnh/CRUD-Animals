@@ -1,13 +1,14 @@
+using WebApplication9.Filters;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromDays(30);
-    options.Cookie.HttpOnly = true; //cookie security
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
@@ -21,17 +22,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseSession(); // Enables session middleware
 app.UseRouting();
-app.UseAuthentication(); // Optional, if using authentication middleware
+app.UseAuthentication(); // Optional, if using authentication
 app.UseAuthorization();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-
 
 app.Run();
