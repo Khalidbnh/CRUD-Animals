@@ -9,6 +9,10 @@
 
     
     <h2>Animal Management</h2>
+    @if (ViewBag.Username != null)
+    {
+        <p>Welcome, @ViewBag.Username!</p>
+    }
 
     <p>
         <a asp-action="Add" asp-controller="Animal" class="btn btn-primary">Add New Animal</a>

@@ -25,6 +25,11 @@ namespace WebApplication9.Controllers
                 return RedirectToAction("Login", "Authentication");
             }*/
 
+            var username = HttpContext.Session.GetString("Username");
+
+            // Pass the username to the view using ViewBag
+            ViewBag.Username = username;
+
             DAL_Animal dal = new DAL_Animal();
             DAL_TipoAnimal dAL_TipoAnimal = new DAL_TipoAnimal();
 
