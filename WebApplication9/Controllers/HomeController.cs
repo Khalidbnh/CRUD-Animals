@@ -18,6 +18,11 @@ namespace WebApplication9.Controllers
 
         public IActionResult Index()
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
+
             DAL_Animal dal = new DAL_Animal();
             DAL_TipoAnimal dAL_TipoAnimal = new DAL_TipoAnimal();
 
