@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication9.Models.ViewModel;
 using WebApplication9.Filters;
+using WebApplication9.DAL;
+using WebApplication9.Models;
 
 namespace WebApplication9.Controllers
 {
@@ -8,7 +10,7 @@ namespace WebApplication9.Controllers
     {
         [HttpGet]
         public IActionResult Login()
-        {
+        {           
             return View();
         }
 
@@ -20,9 +22,18 @@ namespace WebApplication9.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (loginViewModel.Username == "admin" && loginViewModel.Password == "admin")
+                UsuarioDAL usuarioDAL = new UsuarioDAL();
+                Usuario usuario = usuarioDAL.GetUsuarioLogin(loginViewModel.Username, loginViewModel.Password);
+
+               /* if (loginViewModel.Username == "admin" && loginViewModel.Password == "admin")
                 {
                     // Save user session
+                    HttpContext.Session.SetString("Username", loginViewModel.Username);
+                    return RedirectToAction("Index", "Home");
+                }*/
+
+                if(usuario != null)
+                {
                     HttpContext.Session.SetString("Username", loginViewModel.Username);
                     return RedirectToAction("Index", "Home");
                 }
