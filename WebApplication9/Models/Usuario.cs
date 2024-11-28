@@ -12,7 +12,7 @@
 
         public string Email { get; set; }
 
-        public DateOnly? FechaNacimiento { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
 
         public string Telefono {  get; set; }
 

@@ -55,5 +55,39 @@ namespace WebApplication9.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+
+        [HttpGet]
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SignUp(SignUpViewModel signUpViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                UsuarioDAL usuarioDAL = new UsuarioDAL();
+                Usuario usuarioNuevo = new Usuario();
+
+                usuarioNuevo.UserName = signUpViewModel.UserName;
+                usuarioNuevo.Password = signUpViewModel.Password;
+
+                usuarioDAL.CreateUsuario(usuarioNuevo);
+
+                Usuario ValidarCreacion = usuarioDAL.GetUsuarioLogin(signUpViewModel.UserName,signUpViewModel.Password);
+
+                if(ValidarCreacion != null)
+                {
+                    HttpContext.Session.SetString("Username", usuarioNuevo.UserName);
+                    return RedirectToAction("Index", "Home");
+                }
+
+                ModelState.AddModelError("", "No se ha podido crear usuario");
+            }
+
+            return View(signUpViewModel);
+        }
     }
 }
