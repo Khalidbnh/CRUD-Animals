@@ -15,7 +15,7 @@ namespace WebApplication9.Models.ViewModel
 
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Debe confirmar la contraseñs")]
+        [Required(ErrorMessage = "Debe confirmar la contraseñaaaa")]
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "No iguales")]
         public string ConfirmPassword { get; set; }

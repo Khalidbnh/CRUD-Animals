@@ -72,9 +72,18 @@ namespace WebApplication9.Controllers
                 Usuario usuarioNuevo = new Usuario();
 
                 usuarioNuevo.UserName = signUpViewModel.UserName;
-                usuarioNuevo.Password = signUpViewModel.Password;
 
-                usuarioDAL.CreateUsuario(usuarioNuevo);
+
+                Usuario usuarioExistente = usuarioDAL.GetUsuarioLogin(usuarioNuevo.UserName, usuarioNuevo.Password);
+
+                if(usuarioExistente != null)
+                {
+                    ModelState.AddModelError("", "Usuario Existente");
+                    return View(signUpViewModel);
+                }
+
+
+                usuarioDAL.CreateUsuario(usuarioNuevo, signUpViewModel.Password);
 
                 Usuario ValidarCreacion = usuarioDAL.GetUsuarioLogin(signUpViewModel.UserName,signUpViewModel.Password);
 

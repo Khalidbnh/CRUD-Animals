@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using System.Data.SqlClient;
 using WebApplication9.Models;
+using WebApplication9.Tools;
 
 namespace WebApplication9.DAL
 {
@@ -12,59 +13,87 @@ namespace WebApplication9.DAL
 
         public Usuario GetUsuarioLogin(string username, string password)
         {
-            using(SqlConnection sql = new SqlConnection(connecionString))
+            using (SqlConnection sql = new SqlConnection(connecionString))
             {
-                string sqlQuery = "SELECT * FROM Usuario WHERE Username = @Username AND Pass = @Password";
+                string sqlQuery = "SELECT * FROM Usuario WHERE Username = @Username";
                 SqlCommand sqlCommand = new SqlCommand(sqlQuery, sql);
                 sqlCommand.Parameters.AddWithValue("@Username", username);
-                sqlCommand.Parameters.AddWithValue("@Password", password);
 
                 sql.Open();
 
-                using(SqlDataReader reader = sqlCommand.ExecuteReader())
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
                 {
-                    while(reader.Read())
+                    if (reader.Read())
                     {
-                        return new Usuario
+                        var passwordHash = (byte[])reader["PasswordHash"];
+                        var passwordSalt = (byte[])reader["PasswordSalt"];
+
+                        Console.WriteLine("PasswordHash length: " + passwordHash.Length);
+                        Console.WriteLine("PasswordSalt length: " + passwordSalt.Length);
+
+                        if (passwordHash == null || passwordSalt == null)
                         {
-                            IdUsuario = (int)reader["IdUsuario"],
-                            UserName = (string)reader["UserName"],
-                            Password = (string)reader["Pass"],
-                            Apellido = reader["Apellido"] as string ?? string.Empty,
-                            Email = reader["Email"] as string ?? string.Empty,
-                            FechaNacimiento = reader["FechaNacimiento"] != DBNull.Value
-                                      ? (DateTime?)reader["FechaNacimiento"]
-                                      : null, // Nullable DateTime
-                            Telefono = reader["Telefono"] as string ?? string.Empty,
-                            Direccion = reader["Direccion"] as string ?? string.Empty, // Safe nullable string
-                            Ciudad = reader["Ciudad"] as string ?? string.Empty,
-                            Estado = reader["Estado"] as string ?? string.Empty,
-                            CodigoPostal = reader["CodigoPostal"] as string ?? string.Empty,
-                            FechaRegistro = reader["FechaRegistro"] != DBNull.Value
+                            // Log or throw an exception if hash or salt is missing
+                            throw new Exception("PasswordHash or PasswordSalt is missing in the database.");
+                        }
+
+                        // Verify the password
+                        if (PasswordHelper.VerifyPasswordHash(password, passwordHash, passwordSalt))
+                        {
+                            Console.WriteLine("Password verification succeeded.");
+                            return new Usuario
+                            {
+                                IdUsuario = (int)reader["IdUsuario"],
+                                UserName = (string)reader["UserName"],
+                                Apellido = reader["Apellido"] as string ?? string.Empty,
+                                Email = reader["Email"] as string ?? string.Empty,
+                                FechaNacimiento = reader["FechaNacimiento"] != DBNull.Value
+                                    ? (DateTime?)reader["FechaNacimiento"]
+                                    : null,
+                                Telefono = reader["Telefono"] as string ?? string.Empty,
+                                Direccion = reader["Direccion"] as string ?? string.Empty,
+                                Ciudad = reader["Ciudad"] as string ?? string.Empty,
+                                Estado = reader["Estado"] as string ?? string.Empty,
+                                CodigoPostal = reader["CodigoPostal"] as string ?? string.Empty,
+                                FechaRegistro = reader["FechaRegistro"] != DBNull.Value
                                     ? (DateTime)reader["FechaRegistro"]
-                                    : DateTime.MinValue, // Default for non-nullable
-                            Activo = reader["Activo"] != DBNull.Value && (bool)reader["Activo"] // Handle nullable bool
-                        };
+                                    : DateTime.MinValue,
+                                Activo = reader["Activo"] != DBNull.Value && (bool)reader["Activo"]
+                            };
+                        }
+                        else
+                        {
+                            
+                            Console.WriteLine("Password verification failed.");
+                                
+                            // Log or return null if password verification fails
+                            return null;
+                        }
                     }
                 }
             }
 
-
+            // Return null if user not found
             return null;
         }
 
 
-        public void CreateUsuario(Usuario usuario)
+        public void CreateUsuario(Usuario usuario, string password)
         {
+            //Generating el hash y el salt para la contraseña
+            PasswordHelper.CreatePasswordHash(password, out byte[] passwordHash, out  byte[] passwordSalt);
+
+
             using(SqlConnection sqlConnection = new SqlConnection(connecionString))
             {
                 string sQlQuery = "INSERT INTO Usuario " +
-                    "(UserName, Pass, Apellido, Email, FechaNacimiento, Telefono, Direccion, Ciudad, Estado, CodigoPostal, FechaRegistro, Activo)" +
-                    "VALUES (@UserName, @Pass, @Apellido, @Email, @FechaNacimiento, @Telefono, @Direccion, @Ciudad, @Estado, @CodigoPostal, @FechaRegistro, @Activo)";
+                    "(UserName, PasswordHash, PasswordSalt, Apellido, Email, FechaNacimiento, Telefono, Direccion, Ciudad, Estado, CodigoPostal, FechaRegistro, Activo)" +
+                    "VALUES (@UserName, @PasswordHash, @PasswordSalt, @Apellido, @Email, @FechaNacimiento, @Telefono, @Direccion, @Ciudad, @Estado, @CodigoPostal, @FechaRegistro, @Activo)";
                 SqlCommand command = new SqlCommand(sQlQuery, sqlConnection);
 
                 command.Parameters.AddWithValue("@UserName", usuario.UserName);
-                command.Parameters.AddWithValue("@Pass", usuario.Password);
+                command.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                command.Parameters.AddWithValue("@PasswordSalt", passwordSalt);
                 command.Parameters.AddWithValue("@Apellido", usuario.Apellido ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@Email", usuario.Email ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@FechaNacimiento", usuario.FechaNacimiento.HasValue ? (object)usuario.FechaNacimiento.Value : DBNull.Value);

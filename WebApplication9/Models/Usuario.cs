@@ -1,4 +1,6 @@
-﻿namespace WebApplication9.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebApplication9.Models
 {
     public class Usuario
     {
@@ -6,7 +8,7 @@
 
         public string UserName { get; set; }
 
-        public string Password { get; set; }
+        //public string Password { get; set; }
 
         public string Apellido { get; set; }
 
@@ -27,6 +29,10 @@
         public DateTime FechaRegistro { get; set; }
 
         public bool Activo { get; set; }
+
+        // Input-only property for password during signup/login
+        [NotMapped] // Exclude this from being stored in the database
+        public string Password { get; set; }
 
     }
 }
